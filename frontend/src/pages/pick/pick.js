@@ -4,10 +4,17 @@ import React, { useEffect, useRef, useState } from 'react';
 const Pick = () => {
   const videoRef = useRef(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
+  const [useFrontCamera, setUseFrontCamera] = useState(true); // State to toggle between front and back camera
 
   const startCamera = async () => {
+    const constraints = {
+      video: {
+        facingMode: useFrontCamera ? 'user' : 'environment', // 'user' for front, 'environment' for back camera
+      },
+    };
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
@@ -23,14 +30,20 @@ const Pick = () => {
       const stream = videoRef.current.srcObject;
       if (stream) {
         const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
+        tracks.forEach((track) => track.stop());
       }
       videoRef.current.srcObject = null;
       setIsCameraActive(false);
     }
   };
 
+  const toggleCamera = () => {
+    stopCamera(); // Stop the current camera before switching
+    setUseFrontCamera((prev) => !prev); // Toggle between front and back camera
+  };
+
   useEffect(() => {
+    // Automatically stop the camera when the component is unmounted
     return () => {
       stopCamera();
     };
@@ -48,11 +61,19 @@ const Pick = () => {
         />
       </div>
       <button 
-        className="btn btn-success" // Bootstrap button styles
+        className="btn btn-success me-2" // Bootstrap button styles
         onClick={isCameraActive ? stopCamera : startCamera}
       >
         {isCameraActive ? 'Stop Camera' : 'Start Camera'}
       </button>
+      {isCameraActive && (
+        <button 
+          className="btn btn-secondary" 
+          onClick={toggleCamera}
+        >
+          {useFrontCamera ? 'Switch to Back Camera' : 'Switch to Front Camera'}
+        </button>
+      )}
     </div>
   );
 };
