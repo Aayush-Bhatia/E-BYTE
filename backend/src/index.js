@@ -12,7 +12,7 @@ const PORT = process.env.PORT_KEY;
 
 // cors origining
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: 'http://localhost:3000',
     credentials: true
 }))
 
@@ -20,6 +20,7 @@ app.use(cors({
 app.use(express.static('public'));
 app.use(bodyparser.urlencoded({extended: true}));
 app.use(cookieParser());
+
 
 import authRoute from './routes/auth.route.js'
 app.use('/auth',authRoute);
