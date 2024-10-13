@@ -25,7 +25,7 @@ export const verifyjwt = ErrorWrapper(async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
-        throw new ErrorHandler(500, "Internal server error while login!");
+        throw new ErrorHandler(401, "Not authorized to access, kindly login first and try again!");
     }
 })
 
@@ -33,7 +33,6 @@ export const verifyjwt = ErrorWrapper(async (req, res, next) => {
 export const verifyjwtWorker = ErrorWrapper(async (req, res, next) => {
     const incomingRefreshToken = req.cookies.RefreshToken;
     const incomingAccessToken = req.cookies.AccessToken;
-    console.log(incomingRefreshToken, incomingAccessToken);
     if (!incomingRefreshToken || !incomingAccessToken) {
         throw new ErrorHandler(401, "Not authorized to access, kindly login first and try again!");
     }
@@ -51,6 +50,6 @@ export const verifyjwtWorker = ErrorWrapper(async (req, res, next) => {
         req.worker = worker;
         next();
     } catch (error) {
-        throw new ErrorHandler(500, "Internal server error while login!" + error);
+        throw new ErrorHandler(401, "Not authorized to access, kindly login first and try again!");
     }
 })

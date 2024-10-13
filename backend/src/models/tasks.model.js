@@ -2,11 +2,11 @@ import mongoose,{ Schema } from 'mongoose';
 import 'bcrypt';
 
 const taskSchema = new Schema({
-    userId:{
+    user:{
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    requestId: {
+    request: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     }, 

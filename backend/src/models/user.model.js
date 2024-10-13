@@ -46,14 +46,9 @@ const userSchema = new Schema({
             type: String
         }
     },
-    rewardsClaimed: [
+    order:  
         {
-            type: Schema.Types.ObjectId,
-            ref: 'Reward'
-        }
-    ],
-    history: [ 
-        {
+            type:Object,
             location: {
                 area:{
                     type: String
@@ -78,6 +73,9 @@ const userSchema = new Schema({
                 required: true
             },
             pointsAllocated : {
+                type: String,
+            },
+            cashback: {
                 type: Number,
                 default: 0
             },
@@ -85,10 +83,14 @@ const userSchema = new Schema({
                 type: Date,
                 defualt : Date.now
             }
-        }
-    ],
+        },
+    cashbackEarned:{
+        type:Number,
+        default: 0
+    },
     currentRequestId: {
-        type:Schema.Types.ObjectId
+        type:Schema.Types.ObjectId,
+        ref: 'User.history'
     },
     role: {
         type: String,

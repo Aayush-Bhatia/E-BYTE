@@ -30,6 +30,17 @@ app.use('/user', userRouter);
 import wokerRouter from './routes/worker.route.js';
 app.use('/worker', wokerRouter);
 
+router.get('/logout', (req, res, next) => {
+    res.
+    status(200)
+    .cookie("RefreshToken","",{
+        maxAge: 0
+    })
+    .json({
+        message: "Logged out successfully"
+    })
+
+})
 
 // Connecting the MongoDB through Mongoose
 mongoose.connect(`mongodb://localhost:27017/${process.env.DB_NAME}`)

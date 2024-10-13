@@ -1,8 +1,9 @@
 import User from "../models/user.model.js";
 import ErrorHandler from "../utils/ErrorHandler.util.js";
 import ErrorWrapper from "../utils/ErrorWrapper.util.js";
-import uploadOnCloudinary from "../utils/uploadOnCloudinary.util.js";
+import uploadOnCloudinary, { uploadBatchOnCloudinary } from "../utils/uploadOnCloudinary.util.js";
 import Tasks from "../models/tasks.model.js";
+import axios from "axios";
 
 
 export const postScanWaste = ErrorWrapper(async (req, res, next) => {
@@ -10,14 +11,43 @@ export const postScanWaste = ErrorWrapper(async (req, res, next) => {
     if (req.files.length == 0) {
         throw new ErrorHandler(400, "Please upload at least one image");
     }
-    let cloudinaryResponse;
+    let cloudinaryResponse = [];
     try{
-        cloudinaryResponse = await uploadOnCloudinary(req.files);
+        cloudinaryResponse = await uploadBatchOnCloudinary(req.files);
     }catch(err) {
-        throw new ErrorHandler(500, `Error while uploading image ${err.message}`);
+        console.log(err);
+        throw new ErrorHandler(500, `Error while uploading image`);
     }
     //calculation
     try{
+        // let ans = [];
+        // cloudinaryResponse.forEach(async url=>{
+            // axios({
+            //     method: "POST",
+            //     url: "https://detect.roboflow.com/e-waste-dataset-r0ojc/43",
+            //     params: {
+            //         api_key: "Vj75TnVyRZm73jghPB5v",
+            //         image: url
+            //     }
+            // })
+            // .then(function(response) {
+            //     console.log(response.data);
+            // })
+            // .catch(function(error) {
+            //     console.log(error.message);
+            // });
+            // let responseRobo = axios.post("https://detect.roboflow.com/e-waste-dataset-r0ojc/43",{
+            //     params: {
+            //         api_key: "Vj75TnVyRZm73jghPB5v",
+            //         image: url
+            //     }
+            // });
+            // ans.push(responseRobo.data);
+            // console.log(responseRobo.data);
+        // })
+        
+
+
         let pointsGenerated = [50,100];
         
         let user = req.user;
@@ -31,15 +61,18 @@ export const postScanWaste = ErrorWrapper(async (req, res, next) => {
             },
             pics:cloudinaryResponse,
             WasteAmount,
-            status: 'Pending'
+            status: 'Pending',
+            pointsAllocated : {
+                points: pointsGenerated
+            }
         }
 
-        user.history.unshift(newRequest);
-        user.currentRequestId = user.history[0]._id;
+        user.order = newRequest;
+        user.currentRequestId = user.order._id;
         await user.save();
         let task = await Tasks.create({
-            userId: user._id,
-            requestId: user.currentRequestId,
+            user: user._id,
+            request: user.currentRequestId,
             status: "Pending",
             pincode
         });
@@ -48,7 +81,7 @@ export const postScanWaste = ErrorWrapper(async (req, res, next) => {
 
         res.status(201).json({
             success: true,
-            pointsGenerated: pointsGenerated,
+            RoughCashbackEstimation: pointsGenerated,
             requestId: user.currentRequestId,
             message: "Scanned successfully"
         })
@@ -105,20 +138,5 @@ export const getUser = ErrorWrapper(async (req, res, next) => {
     }
 })
 
-export const getCurrentStatus = ErrorWrapper(async (req, res, next) => {
-    try{
-        const user = req.user;
-        let currentRequest = user.history.find(request => request._id.toString() === user.currentRequestId.toString());
-        if(!currentRequest) {
-            throw new ErrorHandler(404, "Request not found");
-        }
-        res.status(200).json({
-            success: true,
-            currentRequest
-        })
-    }catch(err) {
-        throw new ErrorHandler(500, "Error while getting current status, " + err);
-    }
-}) 
 
 

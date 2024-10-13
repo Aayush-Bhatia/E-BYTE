@@ -109,10 +109,10 @@ export const postLogin = ErrorWrapper(async function (req, res, next) {
 
 
 export const workerpostSignup = ErrorWrapper(async function (req, res, next) {
-    const { username, password, email, name, role} = req.body;
+    const { username, password, email, name, role, area, pincode, state} = req.body;
     const incomingFields = Object.keys(req.body);
     //  missingFields
-    const requiredFields = ["username", "password", "email", "name","role"];
+    const requiredFields = ["username", "password", "email", "name","role","area", "pincode", "state"];
     const missingFields = requiredFields.filter((field) => !incomingFields.includes(field));
     // To read image we need to use multer
     if (missingFields.length > 0) {
@@ -137,7 +137,12 @@ export const workerpostSignup = ErrorWrapper(async function (req, res, next) {
             password,
             email,
             name,
-            role
+            role,
+            location: {
+                area,
+                pincode,
+                state
+            }
         });
 
         let newUser = await Worker.findOne({

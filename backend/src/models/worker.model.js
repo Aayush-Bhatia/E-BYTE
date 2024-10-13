@@ -36,14 +36,18 @@ const workerSchema = new Schema({
     },
     location: {
         type: Object,
+        required: true,
         area: {
-            type: String
+            type: String,
+            required:true,
         },
         pincode:{
-            type: String
+            type: String,
+            required:true,
         },
         state: {
-            type: String
+            type: String,
+            required:true,
         }
     },
     role: {
@@ -52,6 +56,9 @@ const workerSchema = new Schema({
     },
     refreshToken:{
         type:String,
+    },
+    feedback:{
+        type:String
     }
 },{
     timestamps: true
