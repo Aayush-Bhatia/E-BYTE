@@ -1,8 +1,8 @@
-// src/components/Auth.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Form } from 'react-bootstrap';
 import { FaUser, FaEnvelope, FaLock, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
+import axios from "../../utils/axios"
 
 const Auth = ({ setIsAuthenticated }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -10,19 +10,28 @@ const Auth = ({ setIsAuthenticated }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [role, setRole] = useState('user');  // Default role as 'user'
   const navigate = useNavigate();
+
+
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = isLogin ? 'http://localhost:5000/api/login' : 'http://localhost:5000/api/signup';
-    const user = { username, email, password, ...(isLogin ? {} : { name }) };
+    const endpoint = isLogin ? 'auth/user/login' : 'auth/user/signup';
+    const user = {
+      username,
+      email,
+      password,
+      ...(isLogin ? {} : { name, role })  // Add name and role only for signup
+    };
 
+    console.log(JSON.stringify(user))
     try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user),
+      const response = await axios.post(endpoint, {user
       });
+
+      // console.log(response)
 
       if (response.ok) {
         const data = await response.json();
@@ -46,20 +55,38 @@ const Auth = ({ setIsAuthenticated }) => {
           <h3 className="text-center mb-4">{isLogin ? 'Login' : 'Sign Up'}</h3>
           <Form onSubmit={handleSubmit}>
             {!isLogin && (
-              <Form.Group className="mb-3">
-                <Form.Label>
-                  <FaUser className="me-2" />
-                  Name
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required={!isLogin}
-                  placeholder="Enter your name"
-                />
-              </Form.Group>
+              <>
+                <Form.Group className="mb-3">
+                  <Form.Label>
+                    <FaUser className="me-2" />
+                    Name
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required={!isLogin}
+                    placeholder="Enter your name"
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>
+                    <FaUser className="me-2" />
+                    Role
+                  </Form.Label>
+                  <Form.Select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    required={!isLogin}
+                  >
+                    <option value="user">user</option>
+                    <option value="worker">worker</option>
+                  </Form.Select>
+                </Form.Group>
+              </>
             )}
+
             <Form.Group className="mb-3">
               <Form.Label>
                 <FaUser className="me-2" />
@@ -73,6 +100,7 @@ const Auth = ({ setIsAuthenticated }) => {
                 placeholder="Enter your username"
               />
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>
                 <FaEnvelope className="me-2" />
@@ -86,6 +114,7 @@ const Auth = ({ setIsAuthenticated }) => {
                 placeholder="Enter your email"
               />
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>
                 <FaLock className="me-2" />
@@ -99,6 +128,7 @@ const Auth = ({ setIsAuthenticated }) => {
                 placeholder="Enter your password"
               />
             </Form.Group>
+
             <Button variant="success" type="submit" className="w-100">
               {isLogin ? <FaSignInAlt className="me-2" /> : <FaUserPlus className="me-2" />}
               {isLogin ? 'Login' : 'Sign Up'}
@@ -107,14 +137,14 @@ const Auth = ({ setIsAuthenticated }) => {
               {isLogin ? (
                 <p>
                   Don't have an account?{' '}
-                  <Button variant="link" className='text-success' onClick={() => setIsLogin(false)}>
+                  <Button variant="link" className="text-success" onClick={() => setIsLogin(false)}>
                     Sign Up
                   </Button>
                 </p>
               ) : (
                 <p>
                   Already have an account?{' '}
-                  <Button variant="link" className='text-success' onClick={() => setIsLogin(true)}>
+                  <Button variant="link" className="text-success" onClick={() => setIsLogin(true)}>
                     Login
                   </Button>
                 </p>
