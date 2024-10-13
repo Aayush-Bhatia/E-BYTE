@@ -88,6 +88,9 @@ const userSchema = new Schema({
     },
     refreshToken:{
         type:String,
+    },
+    feedback: {
+        type: String
     }
 },{
     timestamps: true

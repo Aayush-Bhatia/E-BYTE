@@ -2,7 +2,7 @@ import mongoose,{ Schema } from 'mongoose';
 import 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const userSchema = new Schema({
+const workerSchema = new Schema({
     username: {
         type: String,
         required: true,
@@ -57,12 +57,12 @@ const userSchema = new Schema({
     timestamps: true
 });
 
-userSchema.methods.isPasswordCorrect = async function (enteredPassword) {
+workerSchemaSchema.methods.isPasswordCorrect = async function (enteredPassword) {
     const user = this;
     return await bcrypt.compare(user.password, enteredPassword);
 }
 
-userSchema.methods.generateRefreshToken = async function () {
+workerSchema.methods.generateRefreshToken = async function () {
     return jwt.sign(
         {
             userId: this._id
@@ -74,7 +74,7 @@ userSchema.methods.generateRefreshToken = async function () {
         });
 }
 
-userSchema.pre('save', function (next) {
+workerSchema.pre('save', function (next) {
     if (!this.isModified("password")) return next();
 
     const user = this;
@@ -88,9 +88,7 @@ userSchema.pre('save', function (next) {
 });
 
 
-
-
-userSchema.methods.generateAccessToken = async function () {
+workerSchema.methods.generateAccessToken = async function () {
     return jwt.sign(
         {
             userId: this._id,
@@ -107,5 +105,5 @@ userSchema.methods.generateAccessToken = async function () {
 
 
 
-const User = mongoose.model('User', userSchema);
-export default User;
+const Worker = mongoose.model('Worker', workerSchema);
+export default Worker;
