@@ -51,7 +51,9 @@ export const postScanWaste = ErrorWrapper(async (req, res, next) => {
         let pointsGenerated = [50,100];
         
         let user = req.user;
-        
+        if(user.currentRequestId != null) {
+            throw new ErrorHandler(400, "Wait till the previous request is validated");
+        }
 
         let newRequest = {
             location: {
