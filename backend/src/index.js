@@ -30,7 +30,7 @@ app.use('/user', userRouter);
 import wokerRouter from './routes/worker.route.js';
 app.use('/worker', wokerRouter);
 
-router.get('/logout', (req, res, next) => {
+app.get('/logout', (req, res, next) => {
     res.
     status(200)
     .cookie("RefreshToken","",{
@@ -43,7 +43,7 @@ router.get('/logout', (req, res, next) => {
 })
 
 // Connecting the MongoDB through Mongoose
-mongoose.connect(`mongodb://localhost:27017/${process.env.DB_NAME}`)
+mongoose.connect(`mongodb+srv://atomzcody1005:d4PKfldFNA5U2R8R@cluster0.47hcr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
     .then(()=>{
         app.listen(PORT,()=>{
             console.log('http://localhost:'+PORT);

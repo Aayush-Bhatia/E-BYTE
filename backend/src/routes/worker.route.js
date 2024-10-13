@@ -2,6 +2,7 @@ import express from 'express';
 import { verifyjwtWorker } from '../middlewares/verifyJWT.middleware.js';
 import { getTasks,postUpdateTask, updateFeedback, postupdateProfile, getWorker } from '../controller/worker.controller.js';
 const router = express.Router();
+import upload from '../utils/multer.util.js';
 
 router.post('/getTask',verifyjwtWorker,getTasks);
 router.post('/updateTask',verifyjwtWorker,postUpdateTask);

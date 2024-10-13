@@ -1,8 +1,7 @@
 import express from 'express';
-import { postScanWaste } from '../controller/user.controller.js';
 import upload from "../utils/multer.util.js";
-import { verifyjwt,postupdateProfile, updateFeedback, getUser } from '../middlewares/verifyJWT.middleware.js';
-
+import { verifyjwt } from '../middlewares/verifyJWT.middleware.js';
+import { postupdateProfile, postScanWaste, updateFeedback, getUser } from '../controller/user.controller.js';
 
 const router = express.Router();
 router.post('/scanwaste',verifyjwt,upload.array("images"),postScanWaste);
