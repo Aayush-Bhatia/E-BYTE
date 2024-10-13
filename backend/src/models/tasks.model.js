@@ -3,7 +3,7 @@ import 'bcrypt';
 
 const taskSchema = new Schema({
     userId:{
-        type: Schema.Type.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User'
     },
     requestId: {
@@ -14,7 +14,10 @@ const taskSchema = new Schema({
         type: String,
         required: true
     },
-    pincode   
+    pincode  :{
+        type: String,
+        required: true
+    }
 });
 
 const Tasks = mongoose.model('Tasks', taskSchema);

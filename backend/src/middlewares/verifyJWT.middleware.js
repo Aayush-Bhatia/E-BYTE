@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import User from "../models/user.js";
-import ErrorWrapper from "../utils/ErrorWrapper.js";
-import ErrorHandler from "../utils/ErrorHandler.js";
+import User from "../models/user.model.js";
+import ErrorWrapper from "../utils/ErrorWrapper.util.js";
+import ErrorHandler from "../utils/ErrorHandler.util.js";
 import Worker from "../models/worker.model.js";
 
 export const verifyjwt = ErrorWrapper(async (req, res, next) => {
@@ -33,7 +33,7 @@ export const verifyjwt = ErrorWrapper(async (req, res, next) => {
 export const verifyjwtWorker = ErrorWrapper(async (req, res, next) => {
     const incomingRefreshToken = req.cookies.RefreshToken;
     const incomingAccessToken = req.cookies.AccessToken;
-    // console.log(incomingRefreshToken, incomingAccessToken);
+    console.log(incomingRefreshToken, incomingAccessToken);
     if (!incomingRefreshToken || !incomingAccessToken) {
         throw new ErrorHandler(401, "Not authorized to access, kindly login first and try again!");
     }
@@ -51,6 +51,6 @@ export const verifyjwtWorker = ErrorWrapper(async (req, res, next) => {
         req.worker = worker;
         next();
     } catch (error) {
-        throw new ErrorHandler(500, "Internal server error while login!");
+        throw new ErrorHandler(500, "Internal server error while login!" + error);
     }
 })

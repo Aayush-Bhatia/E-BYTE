@@ -1,7 +1,9 @@
 import express from 'express';
-const router = express.router();
+import { verifyjwtWorker } from '../middlewares/verifyJWT.middleware.js';
+import { getTasks } from '../controller/worker.controller.js';
+const router = express.Router();
 
-
+router.post('/getTask',verifyjwtWorker,getTasks);
 
 
 

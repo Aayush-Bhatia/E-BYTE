@@ -1,5 +1,5 @@
 import mongoose,{ Schema } from 'mongoose';
-import 'bcrypt';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 const userSchema = new Schema({
@@ -55,16 +55,24 @@ const userSchema = new Schema({
     history: [ 
         {
             location: {
-                area,
-                pincode,
-                nearbyPlace
+                area:{
+                    type: String
+                },
+                pincode:{
+                    type: String
+                },
+                nearbyPlace:{
+                    type: String
+                }
             },
             pics:[
                 {
                     type:String // urls
                 }
             ],
-            WasteAmount,  //Amount of waste in Kgs/Tons
+            WasteAmount:{
+                type: Number, // in Kgs/Tons
+            },  //Amount of waste in Kgs/Tons
             status: {
                 type:String,
                 required: true

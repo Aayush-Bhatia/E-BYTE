@@ -1,5 +1,5 @@
 import mongoose,{ Schema } from 'mongoose';
-import 'bcrypt';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 const workerSchema = new Schema({
@@ -57,7 +57,7 @@ const workerSchema = new Schema({
     timestamps: true
 });
 
-workerSchemaSchema.methods.isPasswordCorrect = async function (enteredPassword) {
+workerSchema.methods.isPasswordCorrect = async function (enteredPassword) {
     const user = this;
     return await bcrypt.compare(user.password, enteredPassword);
 }

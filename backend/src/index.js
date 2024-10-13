@@ -17,16 +17,22 @@ app.use(cors({
 }))
 
 // generic middlewares
-app.use(bodyparser.static('./public'));
+app.use(express.static('public'));
 app.use(bodyparser.urlencoded({extended: true}));
 app.use(cookieParser());
 
+import authRoute from './routes/auth.route.js'
+app.use('/auth',authRoute);
+
 import userRouter from './routes/user.route.js';
-app.use('/', userRouter);
+app.use('/user', userRouter);
+
+import wokerRouter from './routes/worker.route.js';
+app.use('/worker', wokerRouter);
 
 
 // Connecting the MongoDB through Mongoose
-mongoose.connect(`mongodb://localhost:2017/${process.env.DB_NAME}`)
+mongoose.connect(`mongodb://localhost:27017/${process.env.DB_NAME}`)
     .then(()=>{
         app.listen(PORT,()=>{
             console.log('http://localhost:'+PORT);

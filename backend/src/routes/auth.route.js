@@ -1,8 +1,10 @@
 import express from "express";
-import { postLogin, postSignup } from "../controllers/auth.controller.js";
+import { workerpostLogin, workerpostSignup ,postLogin, postSignup } from "../controller/auth.controller.js";
 const router = express.Router();
 
-router.post('/signup', postSignup);
-router.post('/login', postLogin);
+router.post('/user/signup', postSignup);
+router.post('/user/login', postLogin);
+router.post('/worker/signup', workerpostSignup);
+router.post('/worker/login', workerpostLogin);
 
 export default router;
