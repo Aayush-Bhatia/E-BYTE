@@ -51,7 +51,9 @@ export const postScanWaste = ErrorWrapper(async (req, res, next) => {
         let pointsGenerated = [50,100];
         
         let user = req.user;
-        
+        if(user.currentRequestId != null) {
+            throw new ErrorHandler(400, "Wait till the previous request is validated");
+        }
 
         let newRequest = {
             location: {
@@ -138,5 +140,14 @@ export const getUser = ErrorWrapper(async (req, res, next) => {
     }
 })
 
-
-
+export const gettingFeedback = ErrorWrapper(async (req,res,next) => {
+    try{
+        const feedback = await User.find({}, 'feedback');
+        res.status(200).json({
+            success: true,
+            feedback: feedback
+        })
+    }catch(err) {
+        throw new ErrorHandler(500, "Error while getting feedback, " + err);
+    }
+})

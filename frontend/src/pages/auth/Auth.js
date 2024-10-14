@@ -1,50 +1,65 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Form } from 'react-bootstrap';
 import { FaUser, FaEnvelope, FaLock, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
-import axios from "../../utils/axios"
 
 const Auth = ({ setIsAuthenticated }) => {
   const [isLogin, setIsLogin] = useState(true);
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [role, setRole] = useState('user');  // Default role as 'user'
+
+  // Single object to manage form fields
+  const [formState, setFormState] = useState({
+    username: '',
+    email: '',
+    password: '',
+    name: '',
+    role: 'user', // default role
+  });
+
   const navigate = useNavigate();
 
-
- 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = isLogin ? 'auth/user/login' : 'auth/user/signup';
-    const user = {
-      username,
-      email,
-      password,
-      ...(isLogin ? {} : { name, role })  // Add name and role only for signup
-    };
+    const endpoint = isLogin
+      ? 'http://127.0.0.1:5000/auth/user/login'
+      : 'http://127.0.0.1:5000/auth/user/signup';
 
-    console.log(JSON.stringify(user))
+    const { username, email, password, name, role } = formState; // Destructure state object
+
     try {
-      const response = await axios.post(endpoint, {user
+      console.log(username)
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+          ...(isLogin ? {} : { name, role }), // Include name and role only for signup
+        }),
       });
-
-      // console.log(response)
 
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.accessToken);
         setIsAuthenticated(true); // Update authentication state
-        navigate('/dashboard'); // Redirect on successful login/signup
+        navigate('/'); // Redirect on successful login/signup
       } else {
         const errorData = await response.json();
         alert(errorData.message);
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('An error occurred while processing your request.');
+      alert(error);
     }
   };
 
@@ -63,8 +78,9 @@ const Auth = ({ setIsAuthenticated }) => {
                   </Form.Label>
                   <Form.Control
                     type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    name="name"
+                    value={formState.name}
+                    onChange={handleInputChange}
                     required={!isLogin}
                     placeholder="Enter your name"
                   />
@@ -76,12 +92,13 @@ const Auth = ({ setIsAuthenticated }) => {
                     Role
                   </Form.Label>
                   <Form.Select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
+                    name="role"
+                    value={formState.role}
+                    onChange={handleInputChange}
                     required={!isLogin}
                   >
-                    <option value="user">user</option>
-                    <option value="worker">worker</option>
+                    <option value="user">User</option>
+                    <option value="worker">Worker</option>
                   </Form.Select>
                 </Form.Group>
               </>
@@ -94,8 +111,9 @@ const Auth = ({ setIsAuthenticated }) => {
               </Form.Label>
               <Form.Control
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                name="username"
+                value={formState.username}
+                onChange={handleInputChange}
                 required
                 placeholder="Enter your username"
               />
@@ -108,8 +126,9 @@ const Auth = ({ setIsAuthenticated }) => {
               </Form.Label>
               <Form.Control
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="email"
+                value={formState.email}
+                onChange={handleInputChange}
                 required
                 placeholder="Enter your email"
               />
@@ -122,8 +141,9 @@ const Auth = ({ setIsAuthenticated }) => {
               </Form.Label>
               <Form.Control
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                name="password"
+                value={formState.password}
+                onChange={handleInputChange}
                 required
                 placeholder="Enter your password"
               />

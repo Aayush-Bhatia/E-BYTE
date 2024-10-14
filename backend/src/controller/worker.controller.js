@@ -3,6 +3,7 @@ import Worker from "../models/worker.model.js";
 import ErrorWrapper from "../utils/ErrorWrapper.util.js";
 import ErrorHandler from "../utils/ErrorHandler.util.js";
 import User from "../models/user.model.js";
+import mongoose from "mongoose";
 
 export const postupdateProfile = ErrorWrapper( async (req, res, next)=>{
     const {name, email, phoneNumber, area, pincode, state} = req.body;
@@ -42,15 +43,24 @@ export const getTasks = ErrorWrapper( async (req, res, next)=>{
 export const postUpdateTask = ErrorWrapper(async (req, res, next)=>{
     const {taskId, status, cashback} = req.body;
     try{
-        let task = await Tasks.findById(taskId);
+        let alltask = await Tasks.find();
+        let task;
+        alltask.forEach(t=>{
+            if(t._id.toString() === taskId){
+                task = t;
+            }
+        })
+        if(task === undefined) {
+            throw new ErrorHandler(404, "Task not found!");
+        }
         let userId = task.user;
+        console.log(userId);
         let user = await User.findById(userId);
         user.status = status;
-        user.cashback = (+user.cashback) + cashback;
+        user.cashbackEarned = (+user.cashbackEarned) + cashback;
         user.currentRequestId = null;
         await user.save();
-        await Tasks.findByIdAndDelete(taskId);
-        await Tasks.save();
+        // await Tasks.findByIdAndDelete(taskId);
         res.status(200).json({
             success: true,
             message: "Task status updated successfully"

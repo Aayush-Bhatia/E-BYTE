@@ -65,7 +65,7 @@ const Navbar = () => {
                     <a className="dropdown-item" onClick={() => { navigate("/blogs"); handleNavClick(); }}>Blogs</a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="#">Another action</a>
+                    <a className="dropdown-item" onClick={() => { navigate("/feedback"); handleNavClick(); }} >Feedback</a>
                   </li>
                 </ul>
               </li>
