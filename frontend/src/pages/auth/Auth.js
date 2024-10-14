@@ -1,4 +1,3 @@
-// src/components/Auth.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Form } from 'react-bootstrap';
@@ -6,36 +5,61 @@ import { FaUser, FaEnvelope, FaLock, FaSignInAlt, FaUserPlus } from 'react-icons
 
 const Auth = ({ setIsAuthenticated }) => {
   const [isLogin, setIsLogin] = useState(true);
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+
+  // Single object to manage form fields
+  const [formState, setFormState] = useState({
+    username: '',
+    email: '',
+    password: '',
+    name: '',
+    role: 'user', // default role
+  });
+
   const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = isLogin ? 'http://localhost:5000/api/login' : 'http://localhost:5000/api/signup';
-    const user = { username, email, password, ...(isLogin ? {} : { name }) };
+    const endpoint = isLogin
+      ? 'http://127.0.0.1:5000/auth/user/login'
+      : 'http://127.0.0.1:5000/auth/user/signup';
+
+    const { username, email, password, name, role } = formState; // Destructure state object
 
     try {
+      console.log(username)
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+          ...(isLogin ? {} : { name, role }), // Include name and role only for signup
+        }),
       });
 
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.accessToken);
         setIsAuthenticated(true); // Update authentication state
-        navigate('/dashboard'); // Redirect on successful login/signup
+        navigate('/'); // Redirect on successful login/signup
       } else {
         const errorData = await response.json();
         alert(errorData.message);
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('An error occurred while processing your request.');
+      alert(error);
     }
   };
 
@@ -46,20 +70,40 @@ const Auth = ({ setIsAuthenticated }) => {
           <h3 className="text-center mb-4">{isLogin ? 'Login' : 'Sign Up'}</h3>
           <Form onSubmit={handleSubmit}>
             {!isLogin && (
-              <Form.Group className="mb-3">
-                <Form.Label>
-                  <FaUser className="me-2" />
-                  Name
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required={!isLogin}
-                  placeholder="Enter your name"
-                />
-              </Form.Group>
+              <>
+                <Form.Group className="mb-3">
+                  <Form.Label>
+                    <FaUser className="me-2" />
+                    Name
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="name"
+                    value={formState.name}
+                    onChange={handleInputChange}
+                    required={!isLogin}
+                    placeholder="Enter your name"
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>
+                    <FaUser className="me-2" />
+                    Role
+                  </Form.Label>
+                  <Form.Select
+                    name="role"
+                    value={formState.role}
+                    onChange={handleInputChange}
+                    required={!isLogin}
+                  >
+                    <option value="user">User</option>
+                    <option value="worker">Worker</option>
+                  </Form.Select>
+                </Form.Group>
+              </>
             )}
+
             <Form.Group className="mb-3">
               <Form.Label>
                 <FaUser className="me-2" />
@@ -67,12 +111,14 @@ const Auth = ({ setIsAuthenticated }) => {
               </Form.Label>
               <Form.Control
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                name="username"
+                value={formState.username}
+                onChange={handleInputChange}
                 required
                 placeholder="Enter your username"
               />
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>
                 <FaEnvelope className="me-2" />
@@ -80,12 +126,14 @@ const Auth = ({ setIsAuthenticated }) => {
               </Form.Label>
               <Form.Control
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="email"
+                value={formState.email}
+                onChange={handleInputChange}
                 required
                 placeholder="Enter your email"
               />
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>
                 <FaLock className="me-2" />
@@ -93,12 +141,14 @@ const Auth = ({ setIsAuthenticated }) => {
               </Form.Label>
               <Form.Control
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                name="password"
+                value={formState.password}
+                onChange={handleInputChange}
                 required
                 placeholder="Enter your password"
               />
             </Form.Group>
+
             <Button variant="success" type="submit" className="w-100">
               {isLogin ? <FaSignInAlt className="me-2" /> : <FaUserPlus className="me-2" />}
               {isLogin ? 'Login' : 'Sign Up'}
@@ -107,14 +157,14 @@ const Auth = ({ setIsAuthenticated }) => {
               {isLogin ? (
                 <p>
                   Don't have an account?{' '}
-                  <Button variant="link" className='text-success' onClick={() => setIsLogin(false)}>
+                  <Button variant="link" className="text-success" onClick={() => setIsLogin(false)}>
                     Sign Up
                   </Button>
                 </p>
               ) : (
                 <p>
                   Already have an account?{' '}
-                  <Button variant="link" className='text-success' onClick={() => setIsLogin(true)}>
+                  <Button variant="link" className="text-success" onClick={() => setIsLogin(true)}>
                     Login
                   </Button>
                 </p>

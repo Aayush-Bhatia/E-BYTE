@@ -1,8 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const Testimonials = () => {
+  const[data,setdata]=useState(null);
+  useEffect(()=>{
+    const postFeedback = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/user/getFeedback', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            // Add your request body data here if needed
+          }),
+        });
+    
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+    
+        // Assuming the response is in JSON format
+        const data = await response.json();
+        
+        // Check if the "success" field is true
+        if (data.success) {
+          console.log('Feedback:', data);
+          setdata(data.feedback)
+          // Do something with the feedback (e.g., set state in React)
+        } else {
+          console.error('Error in response:', data);
+        }
+      } catch (error) {
+        console.error('Error fetching feedback:', error);
+      }
+    };
+    
+    postFeedback();
+
+  },[])
   return (
     <div className="container my-5">
       <h2 className="text-center mb-4">What Our Clients Say</h2>
