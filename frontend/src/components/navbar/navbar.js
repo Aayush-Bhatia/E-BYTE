@@ -8,7 +8,7 @@ const Navbar = () => {
     height: "40px",
     filter: 'invert(1)',
   };
-  
+
   const [isNavOpen, setIsNavOpen] = useState(false);
 
   const toggleNav = () => {
@@ -17,6 +17,14 @@ const Navbar = () => {
 
   const handleNavClick = () => {
     setIsNavOpen(false); // Close the navbar when an item is clicked
+  };
+
+  const handleLogout = () => {
+    // Perform logout logic here (e.g., remove tokens, clear user state)
+    localStorage.removeItem('token'); // Example: clear token from local storage
+    // You may want to also reset any user context or state if you're using Context API or Redux
+    navigate('/login'); // Redirect to login page after logout
+    handleNavClick(); // Close the navbar
   };
 
   return (
@@ -50,6 +58,9 @@ const Navbar = () => {
               <li className="nav-item">
                 <a className="nav-link text-light" onClick={() => { navigate("/contact"); handleNavClick(); }}>Contact</a>
               </li>
+              <li className="nav-item">
+                <a className="nav-link text-light" onClick={() => { navigate("/worker"); handleNavClick(); }}>List</a>
+              </li>
               <li className="nav-item dropdown">
                 <a 
                   className="nav-link dropdown-toggle text-light" 
@@ -65,9 +76,12 @@ const Navbar = () => {
                     <a className="dropdown-item" onClick={() => { navigate("/blogs"); handleNavClick(); }}>Blogs</a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="#">Another action</a>
+                    <a className="dropdown-item" onClick={() => { navigate("/feedback"); handleNavClick(); }} >Feedback</a>
                   </li>
                 </ul>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link text-light" onClick={handleLogout}>Logout</a> {/* Logout link */}
               </li>
             </ul>
           </div>
