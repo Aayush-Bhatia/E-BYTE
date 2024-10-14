@@ -12,6 +12,7 @@ import Auth from './pages/auth/Auth';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import Dashboard from "./pages/Dashboard/Dashboard"
 import FeedbackPage from './pages/feedback/Feedback';
+import Worker from "./pages/worker/Worker"
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Authentication state
@@ -22,6 +23,8 @@ const App = () => {
       <Routes>
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/login" element={<Auth setIsAuthenticated={setIsAuthenticated} />} />
+        
+        <Route path="/worker" element={<PrivateRoute element={<Worker />} isAuthenticated={isAuthenticated} />} />
         <Route path="/" element={<PrivateRoute element={<Home />} isAuthenticated={isAuthenticated} />} />
         <Route path="/feedback" element={<PrivateRoute element={<FeedbackPage />} isAuthenticated={isAuthenticated} />} />
         <Route path="/about" element={<PrivateRoute element={<About />} isAuthenticated={isAuthenticated} />} />

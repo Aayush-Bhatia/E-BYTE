@@ -1,81 +1,216 @@
-import React, { useEffect, useRef, useState } from 'react';
-// import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from 'react';
+import { Button, Form, Col, Row, Alert } from 'react-bootstrap';
 
-const Pick = () => {
-  const videoRef = useRef(null);
-  const [isCameraActive, setIsCameraActive] = useState(false);
-  const [useFrontCamera, setUseFrontCamera] = useState(true); // State to toggle between front and back camera
+const ScanWasteForm = () => {
+  const [formData, setFormData] = useState({
+    age: '',
+    scrap: '',
+    price: '',
+    area: '',
+    pincode: '',
+    nearbyPlace: '',
+    wasteAmount: '',
+  });
 
-  const startCamera = async () => {
-    const constraints = {
-      video: {
-        facingMode: useFrontCamera ? 'user' : 'environment', // 'user' for front, 'environment' for back camera
-      },
-    };
+  const [files, setFiles] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle file input
+  const handleFileChange = (e) => {
+    setFiles(Array.from(e.target.files));
+  };
+
+  // Submit form
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    // Prepare form data for submission
+    const data = new FormData();
+    for (const key in formData) {
+      data.append(key, formData[key]);
+    }
+    files.forEach((file) => {
+      data.append('files', file);
+    });
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
+      const response = await fetch('http://127.0.0.1:5000/api/waste/scan', {
+        method: 'POST',
+        body: data,
+        credentials: 'include', // To send cookies with request
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        setSuccessMessage(result.message);
+        setFormData({
+          age: '',
+          scrap: '',
+          price: '',
+          area: '',
+          pincode: '',
+          nearbyPlace: '',
+          wasteAmount: '',
+        });
+        setFiles([]);
+      } else {
+        throw new Error(result.message);
       }
-      setIsCameraActive(true);
     } catch (error) {
-      console.error("Error accessing the camera: ", error);
-      alert("Could not access the camera. Please check your permissions.");
+      setErrorMessage(error.message);
     }
   };
-
-  const stopCamera = () => {
-    if (videoRef.current) {
-      const stream = videoRef.current.srcObject;
-      if (stream) {
-        const tracks = stream.getTracks();
-        tracks.forEach((track) => track.stop());
-      }
-      videoRef.current.srcObject = null;
-      setIsCameraActive(false);
-    }
-  };
-
-  const toggleCamera = () => {
-    stopCamera(); // Stop the current camera before switching
-    setUseFrontCamera((prev) => !prev); // Toggle between front and back camera
-  };
-
-  useEffect(() => {
-    // Automatically stop the camera when the component is unmounted
-    return () => {
-      stopCamera();
-    };
-  }, []);
 
   return (
-    <div className="container text-center mt-5">
-      <h1 className="mb-4">Camera Access</h1>
-      <div className="mb-3">
-        <video
-          ref={videoRef}
-          autoPlay
-          className="img-fluid border rounded" // Bootstrap classes for styling
-          style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
-        />
-      </div>
-      <button 
-        className="btn btn-success me-2" // Bootstrap button styles
-        onClick={isCameraActive ? stopCamera : startCamera}
-      >
-        {isCameraActive ? 'Stop Camera' : 'Start Camera'}
-      </button>
-      {isCameraActive && (
-        <button 
-          className="btn btn-secondary" 
-          onClick={toggleCamera}
-        >
-          {useFrontCamera ? 'Switch to Back Camera' : 'Switch to Front Camera'}
-        </button>
-      )}
+    <div className="container mt-4">
+      <h2>Scan Waste</h2>
+      {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+      {successMessage && <Alert variant="success">{successMessage}</Alert>}
+      <Form onSubmit={handleSubmit}>
+        <Form.Group as={Row} className="mb-3">
+          <Form.Label column sm={2}>
+            Age
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="number"
+              name="age"
+              value={formData.age}
+              onChange={handleChange}
+              required
+              placeholder="Enter your age"
+            />
+          </Col>
+        </Form.Group>
+
+        <Form.Group as={Row} className="mb-3">
+          <Form.Label column sm={2}>
+            Scrap
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="text"
+              name="scrap"
+              value={formData.scrap}
+              onChange={handleChange}
+              required
+              placeholder="Enter type of scrap"
+            />
+          </Col>
+        </Form.Group>
+
+        <Form.Group as={Row} className="mb-3">
+          <Form.Label column sm={2}>
+            Price
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              required
+              placeholder="Enter price"
+            />
+          </Col>
+        </Form.Group>
+
+        <Form.Group as={Row} className="mb-3">
+          <Form.Label column sm={2}>
+            Area
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="text"
+              name="area"
+              value={formData.area}
+              onChange={handleChange}
+              required
+              placeholder="Enter your area"
+            />
+          </Col>
+        </Form.Group>
+
+        <Form.Group as={Row} className="mb-3">
+          <Form.Label column sm={2}>
+            Pincode
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="text"
+              name="pincode"
+              value={formData.pincode}
+              onChange={handleChange}
+              required
+              placeholder="Enter your pincode"
+            />
+          </Col>
+        </Form.Group>
+
+        <Form.Group as={Row} className="mb-3">
+          <Form.Label column sm={2}>
+            Nearby Place
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="text"
+              name="nearbyPlace"
+              value={formData.nearbyPlace}
+              onChange={handleChange}
+              required
+              placeholder="Enter a nearby place"
+            />
+          </Col>
+        </Form.Group>
+
+        <Form.Group as={Row} className="mb-3">
+          <Form.Label column sm={2}>
+            Waste Amount
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="number"
+              name="wasteAmount"
+              value={formData.wasteAmount}
+              onChange={handleChange}
+              required
+              placeholder="Enter waste amount"
+            />
+          </Col>
+        </Form.Group>
+
+        <Form.Group as={Row} className="mb-3">
+          <Form.Label column sm={2}>
+            Upload Images
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="file"
+              onChange={handleFileChange}
+              multiple
+              required
+            />
+          </Col>
+        </Form.Group>
+
+        <Button variant="primary" type="submit">
+          Scan Waste
+        </Button>
+      </Form>
     </div>
   );
 };
 
-export default Pick;
+export default ScanWasteForm;

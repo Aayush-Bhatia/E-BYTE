@@ -20,7 +20,8 @@ const FeedbackPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ feedback }),
+         credentials: 'include',
+        body: JSON.stringify({" feedback":"amazing" }),
       });
 
       if (response.ok) {
