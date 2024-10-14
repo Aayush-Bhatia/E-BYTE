@@ -17,6 +17,7 @@ app.use(cors({
 }))
 
 // generic middlewares
+app.use(bodyparser.json({ limit: "4kb" }));
 app.use(express.static('public'));
 app.use(bodyparser.urlencoded({extended: true}));
 app.use(cookieParser());

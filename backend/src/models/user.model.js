@@ -29,7 +29,6 @@ const userSchema = new Schema({
     },
     phoneNumber:{
         type:String,
-        unique: true
     },
     profileImage: {
         type: String, // cloudinary url
