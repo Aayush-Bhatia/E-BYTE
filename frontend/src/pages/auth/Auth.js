@@ -27,19 +27,26 @@ const Auth = ({ setIsAuthenticated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const endpoint = isLogin
       ? 'http://127.0.0.1:5000/auth/user/login'
       : 'http://127.0.0.1:5000/auth/user/signup';
 
     const { username, email, password, name, role } = formState; // Destructure state object
+    if(role=="Worker" || role=="worker"){
+      navigate("/worker")
+      return;
+    }
 
     try {
-      console.log(username)
+      console.log(username);
       const response = await fetch(endpoint, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
+         // This will send cookies with the request
         body: JSON.stringify({
           username,
           email,
