@@ -34,6 +34,8 @@ const Auth = ({ setIsAuthenticated }) => {
 
     const { username, email, password, name, role } = formState; // Destructure state object
     if(role=="Worker" || role=="worker"){
+      console.log("hii")
+      setIsAuthenticated(true);
       navigate("/worker")
       return;
     }

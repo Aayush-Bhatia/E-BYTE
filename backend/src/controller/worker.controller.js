@@ -28,8 +28,8 @@ export const postupdateProfile = ErrorWrapper( async (req, res, next)=>{
 
 export const getTasks = ErrorWrapper( async (req, res, next)=>{
     try{
-        let pincode = req.worker.location.pincode;
-        let tasks = await Tasks.find({pincode: pincode}).populate('user', 'name email phoneNumber order');
+        // let pincode = req.worker.location.pincode;
+        let tasks = await Tasks.find().populate('user', 'name email phoneNumber order');
         res.status(200).json({
             success: true,
             tasks: tasks

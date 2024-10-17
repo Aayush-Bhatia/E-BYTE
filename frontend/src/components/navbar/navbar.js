@@ -58,9 +58,7 @@ const Navbar = () => {
               <li className="nav-item">
                 <a className="nav-link text-light" onClick={() => { navigate("/contact"); handleNavClick(); }}>Contact</a>
               </li>
-              <li className="nav-item">
-                <a className="nav-link text-light" onClick={() => { navigate("/worker"); handleNavClick(); }}>List</a>
-              </li>
+            
               <li className="nav-item dropdown">
                 <a 
                   className="nav-link dropdown-toggle text-light" 

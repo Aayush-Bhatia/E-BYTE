@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 import Testimonials from './testimonals';
+import axios from "axios"
 
 const Home = () => {
+
+
+ 
   const navigate=useNavigate()
   return (
     <div className="home">
@@ -15,7 +19,7 @@ const Home = () => {
           <p className="lead" style={{mixBlendMode:"difference"}}>
             Your one-stop solution for safe and eco-friendly disposal of electronic waste.
           </p>
-          <a href="/services" className="btn btn-success btn-lg mt-3">Learn More</a>
+          <a  className="btn btn-success btn-lg mt-3" onClick={()=>{navigate("/services")}}>Learn More</a>
         </div>
       </section>
 
