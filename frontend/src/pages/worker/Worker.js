@@ -14,8 +14,8 @@ const WorkerTodoList = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/api/worker/tasks', {
-          method: 'GET',
+        const response = await fetch('http://127.0.0.1:5000/worker/getTask', {
+          method: 'POST',
           credentials: 'include', // Ensures cookies are sent with the request
           headers: {
             'Content-Type': 'application/json',
@@ -23,8 +23,9 @@ const WorkerTodoList = () => {
         });
 
         const data = await response.json();
-        if (data.success) {
-          setTasks(data.tasks);
+        if (data?.success) {
+          console.log(data)
+          setTasks(data?.tasks);
         } else {
           alert('Error fetching tasks');
         }
@@ -107,12 +108,12 @@ const WorkerTodoList = () => {
                 <strong>Task ID:</strong> {task._id}
               </Card.Header>
               <Card.Body>
-                <Card.Title>{task.title}</Card.Title>
-                <Card.Text>{task.description}</Card.Text>
+                {/* <Card.Title>{task?.title}</Card.Title>
+                <Card.Text>{task?.description}</Card.Text> */}
                 <Card.Text>
-                  <strong>Assigned by:</strong> {task.user.name} <br />
-                  <strong>Email:</strong> {task.user.email} <br />
-                  <strong>Phone:</strong> {task.user.phoneNumber}
+                  <strong>Assigned by:</strong> {task?.user?.name} <br />
+                  <strong>Email:</strong> {task?.user?.email} <br />
+                  <strong>Phone:</strong> {task?.user?.phoneNumber}
                 </Card.Text>
 
                 <Form.Group className="mb-3">

@@ -4,7 +4,7 @@ import { getTasks,postUpdateTask, updateFeedback, postupdateProfile, getWorker }
 const router = express.Router();
 import upload from '../utils/multer.util.js';
 
-router.post('/getTask',verifyjwtWorker,getTasks);
+router.post('/getTask',getTasks);
 router.post('/updateTask',verifyjwtWorker,postUpdateTask);
 router.post('/feedback',verifyjwtWorker,updateFeedback);
 router.post('/updateProfile',verifyjwtWorker,upload.single("image"),postupdateProfile);
