@@ -29,8 +29,8 @@ const Auth = ({ setIsAuthenticated }) => {
     e.preventDefault();
     
     const endpoint = isLogin
-      ? 'http://127.0.0.1:5000/auth/user/login'
-      : 'http://127.0.0.1:5000/auth/user/signup';
+      ? 'http://127.0.0.1:4444/auth/user/login'
+      : 'http://127.0.0.1:4444/auth/user/signup';
 
     const { username, email, password, name, role } = formState; // Destructure state object
     if(role=="Worker" || role=="worker"){

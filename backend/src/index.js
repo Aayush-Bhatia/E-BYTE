@@ -8,7 +8,7 @@ import cors from 'cors';
 
 // Initialize the application
 const app = express();
-const PORT = process.env.PORT_KEY;
+const PORT = 4444;
 
 // cors origining
 app.use(cors({
@@ -46,7 +46,7 @@ app.get('/logout', (req, res, next) => {
 })
 
 // Connecting the MongoDB through Mongoose
-mongoose.connect(`mongodb+srv://atomzcody1005:d4PKfldFNA5U2R8R@cluster0.47hcr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
+mongoose.connect(`mongodb+srv://guptakshat1005:KNOYc5SdnIj3GBJ0@my-cluster.lyuk8gp.mongodb.net/ebyte?retryWrites=true&w=majority&appName=my-cluster`)
     .then(()=>{
         app.listen(PORT,()=>{
             console.log('http://localhost:'+PORT);
